@@ -1,5 +1,12 @@
 # Alice Agent — AI Web Search Agent
 
+[![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![uv](https://img.shields.io/badge/uv-package_manager-7C3AED?style=for-the-badge&logo=astral&logoColor=white)](https://docs.astral.sh/uv/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-web-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Typer](https://img.shields.io/badge/Typer-CLI-1DA462?style=for-the-badge&logo=typer&logoColor=white)](https://typer.tiangolo.com/)
+[![Yandex AI](https://img.shields.io/badge/Yandex_AI-Studio-FC3F1D?style=for-the-badge&logo=yandex&logoColor=white)](https://yandex.cloud/en/services/yandexgpt)
+[![Tests](https://img.shields.io/badge/tests-104_passing-brightgreen?style=for-the-badge&logo=pytest&logoColor=white)](./tests/)
+
 CLI-агент для PR-команды **DDVB** на базе **Alice AI LLM** (Yandex AI Studio).
 Поиск в российском интернете встроен в агента — отдельный API поиска не нужен.
 
