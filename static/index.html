@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alice AI — DDVB</title>
+  <!-- JetBrains Mono for monospace (code/URLs); Atyp fonts are self-hosted via CSS @font-face -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <!-- marked.js for Markdown rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+  <!-- DOMPurify for XSS sanitization -->
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
+  <link rel="stylesheet" href="/css/alice.css" />
+</head>
+<body>
+  <!-- Background mesh -->
+  <div class="bg-mesh" aria-hidden="true">
+    <div class="bg-mesh__orb bg-mesh__orb--gold"></div>
+    <div class="bg-mesh__orb bg-mesh__orb--gold-2"></div>
+  </div>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__logo">
+        <span class="sidebar__logo-mark">A</span>
+        <div class="sidebar__logo-text">
+          <span class="sidebar__wordmark">Alice AI</span>
+          <span class="sidebar__submark">DDVB Agent</span>
+        </div>
+      </div>
+
+      <nav class="sidebar__nav" role="navigation" aria-label="Основная навигация">
+        <button class="nav-item nav-item--active" data-view="search" aria-current="page">
+          <svg class="nav-item__icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M13.5 13.5L17 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span>Поиск</span>
+        </button>
+        <button class="nav-item" data-view="chat">
+          <svg class="nav-item__icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M3 5a2 2 0 012-2h10a2 2 0 012 2v7a2 2 0 01-2 2H6l-3 3V5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>
+          <span>Чат</span>
+        </button>
+        <button class="nav-item" data-view="fetch">
+          <svg class="nav-item__icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M3 10h14M10 3c-2 3-2 11 0 14M10 3c2 3 2 11 0 14" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <span>Извлечение</span>
+        </button>
+        <button class="nav-item" data-view="config">
+          <svg class="nav-item__icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span>Конфигурация</span>
+        </button>
+      </nav>
+
+      <div class="sidebar__footer">
+        <span class="sidebar__version" id="sidebar-version">v0.2.0</span>
+      </div>
+    </aside>
+
+    <!-- Mobile bottom tab bar -->
+    <nav class="tab-bar" role="navigation" aria-label="Навигация (мобильная)">
+      <button class="tab-item tab-item--active" data-view="search">
+        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M13.5 13.5L17 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span>Поиск</span>
+      </button>
+      <button class="tab-item" data-view="chat">
+        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 5a2 2 0 012-2h10a2 2 0 012 2v7a2 2 0 01-2 2H6l-3 3V5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        <span>Чат</span>
+      </button>
+      <button class="tab-item" data-view="fetch">
+        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M3 10h14M10 3c-2 3-2 11 0 14M10 3c2 3 2 11 0 14" stroke="currentColor" stroke-width="1.5"/></svg>
+        <span>Извлечь</span>
+      </button>
+      <button class="tab-item" data-view="config">
+        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span>Конфиг</span>
+      </button>
+    </nav>
+
+    <!-- Main content -->
+    <main class="content" id="main-content">
+
+      <!-- ── Search view ── -->
+      <section class="view view--active" id="view-search" aria-label="Поиск">
+        <div class="view__header">
+          <h1 class="view__title">Поиск</h1>
+          <p class="view__subtitle">Веб-поиск через Yandex AI Studio</p>
+        </div>
+
+        <div class="search-form">
+          <textarea
+            id="search-input"
+            class="search-form__textarea"
+            placeholder="Введите поисковый запрос..."
+            rows="4"
+            aria-label="Поисковый запрос"
+          ></textarea>
+          <div class="search-form__actions">
+            <button id="search-btn" class="btn btn--primary btn--lg">
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" class="btn__icon"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M13.5 13.5L17 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Искать
+            </button>
+          </div>
+        </div>
+
+        <!-- Skeleton loader -->
+        <div id="search-skeleton" class="skeleton-card" hidden>
+          <div class="skeleton-card__label">Ищу...</div>
+          <div class="skeleton-line skeleton-line--80"></div>
+          <div class="skeleton-line skeleton-line--60"></div>
+          <div class="skeleton-line skeleton-line--90"></div>
+          <div class="skeleton-line skeleton-line--50"></div>
+          <div class="skeleton-line skeleton-line--70"></div>
+        </div>
+
+        <!-- Result card -->
+        <div id="search-result" class="result-card" hidden>
+          <div class="result-card__content" id="search-answer"></div>
+          <div class="result-card__actions">
+            <button id="export-json-btn" class="btn btn--ghost btn--sm">
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" class="btn__icon"><path d="M3 2h7l3 3v9H3V2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M10 2v3h3" stroke="currentColor" stroke-width="1.2"/></svg>
+              Скачать JSON
+            </button>
+            <button id="export-md-btn" class="btn btn--ghost btn--sm">
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" class="btn__icon"><path d="M3 2h7l3 3v9H3V2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M10 2v3h3" stroke="currentColor" stroke-width="1.2"/><text x="5" y="12" font-size="5" fill="currentColor">MD</text></svg>
+              Скачать MD
+            </button>
+            <button id="search-new-btn" class="btn btn--ghost btn--sm" style="margin-left: auto;">
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" class="btn__icon"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Новый поиск
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Chat view ── -->
+      <section class="view" id="view-chat" aria-label="Чат" hidden>
+        <div class="view__header view__header--chat">
+          <div>
+            <h1 class="view__title">Чат</h1>
+            <p class="view__subtitle">Многоходовой диалог с памятью</p>
+          </div>
+          <button id="chat-new-btn" class="btn btn--ghost btn--sm">
+            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" class="btn__icon"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Новый разговор
+          </button>
+        </div>
+
+        <div class="chat-messages" id="chat-messages" role="log" aria-live="polite">
+          <div class="chat-welcome">
+            <div class="chat-welcome__avatar">A</div>
+            <div class="chat-welcome__text">Привет! Я Alice — ваш AI-ассистент с веб-поиском. Задайте вопрос на русском.</div>
+          </div>
+        </div>
+
+        <!-- Typing indicator -->
+        <div id="chat-typing" class="typing-indicator" hidden aria-label="Alice печатает">
+          <div class="typing-indicator__dot"></div>
+          <div class="typing-indicator__dot"></div>
+          <div class="typing-indicator__dot"></div>
+          <span class="typing-indicator__label">Думаю...</span>
+        </div>
+
+        <div class="chat-input-bar">
+          <textarea
+            id="chat-input"
+            class="chat-input-bar__textarea"
+            placeholder="Введите сообщение..."
+            rows="1"
+            aria-label="Сообщение"
+          ></textarea>
+          <button id="chat-send-btn" class="btn btn--primary btn--icon" aria-label="Отправить">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 10L17 3L10 17L9 11L3 10Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- ── Fetch view ── -->
+      <section class="view" id="view-fetch" aria-label="Извлечение текста" hidden>
+        <div class="view__header">
+          <h1 class="view__title">Извлечение</h1>
+          <p class="view__subtitle">Получить текстовое содержимое веб-страницы</p>
+        </div>
+
+        <div class="fetch-form">
+          <div class="fetch-form__input-row">
+            <input
+              id="fetch-url-input"
+              type="url"
+              class="fetch-form__input"
+              placeholder="https://example.com"
+              aria-label="URL страницы"
+            />
+            <button id="fetch-btn" class="btn btn--primary">
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" class="btn__icon"><path d="M10 3v14M3 10h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Извлечь
+            </button>
+          </div>
+        </div>
+
+        <!-- Skeleton -->
+        <div id="fetch-skeleton" class="skeleton-card" hidden>
+          <div class="skeleton-card__label">Загружаю...</div>
+          <div class="skeleton-line skeleton-line--90"></div>
+          <div class="skeleton-line skeleton-line--70"></div>
+          <div class="skeleton-line skeleton-line--80"></div>
+          <div class="skeleton-line skeleton-line--55"></div>
+          <div class="skeleton-line skeleton-line--75"></div>
+          <div class="skeleton-line skeleton-line--65"></div>
+        </div>
+
+        <!-- Result -->
+        <div id="fetch-result" class="result-card result-card--mono" hidden>
+          <pre id="fetch-content" class="fetch-output"></pre>
+        </div>
+      </section>
+
+      <!-- ── Config view ── -->
+      <section class="view" id="view-config" aria-label="Конфигурация" hidden>
+        <div class="view__header">
+          <h1 class="view__title">Конфигурация</h1>
+          <p class="view__subtitle">Текущие настройки агента</p>
+        </div>
+
+        <div id="config-skeleton" class="config-grid" aria-busy="true">
+          <div class="config-card skeleton-card"><div class="skeleton-line skeleton-line--60"></div></div>
+          <div class="config-card skeleton-card"><div class="skeleton-line skeleton-line--80"></div></div>
+          <div class="config-card skeleton-card"><div class="skeleton-line skeleton-line--70"></div></div>
+          <div class="config-card skeleton-card"><div class="skeleton-line skeleton-line--50"></div></div>
+        </div>
+
+        <div id="config-grid" class="config-grid" hidden>
+          <div class="config-card config-card--version">
+            <div class="config-card__label">Версия</div>
+            <div class="config-card__value config-card__value--display" id="cfg-version">—</div>
+          </div>
+          <div class="config-card">
+            <div class="config-card__label">API ключ</div>
+            <div class="config-card__value" id="cfg-api-key">
+              <span class="status-dot" id="cfg-api-dot"></span>
+              <span id="cfg-api-text">—</span>
+            </div>
+          </div>
+          <div class="config-card config-card--wide">
+            <div class="config-card__label">ID агента</div>
+            <code class="config-card__mono" id="cfg-agent-id">—</code>
+          </div>
+          <div class="config-card">
+            <div class="config-card__label">Folder ID</div>
+            <code class="config-card__mono" id="cfg-folder-id">—</code>
+          </div>
+          <div class="config-card config-card--wide">
+            <div class="config-card__label">Endpoint</div>
+            <code class="config-card__mono" id="cfg-endpoint">—</code>
+          </div>
+          <div class="config-card">
+            <div class="config-card__label">Макс. шагов</div>
+            <div class="config-card__value" id="cfg-max-steps">—</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toast-container" class="toast-container" role="status" aria-live="polite"></div>
+
+  <!-- JS modules -->
+  <script src="/js/components/toast.js"></script>
+  <script src="/js/components/loader.js"></script>
+  <script src="/js/components/markdown.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/views/search.js"></script>
+  <script src="/js/views/chat.js"></script>
+  <script src="/js/views/fetch.js"></script>
+  <script src="/js/views/config.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
