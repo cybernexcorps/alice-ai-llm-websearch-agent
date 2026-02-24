@@ -1,44 +1,8 @@
-# Environment — never commit secrets
 .env
-.env.local
-
-# Python
+.venv/
 __pycache__/
 *.py[cod]
-*.pyo
-*.pyd
-.Python
 *.egg-info/
 dist/
-build/
-.eggs/
-
-# Virtual environments
-.venv/
-venv/
-env/
-
-# uv
-.uv/
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# Testing
 .pytest_cache/
-.coverage
-htmlcov/
-*.xml
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Claude Code
-.claude/
-
-# Local output files
 reports/
