@@ -8,7 +8,7 @@
 [![Yandex AI](https://img.shields.io/badge/Yandex_AI-Studio-FC3F1D?style=for-the-badge&logo=yandex&logoColor=white)](https://yandex.cloud/en/services/yandexgpt)
 [![Tests](https://img.shields.io/badge/tests-104_passing-brightgreen?style=for-the-badge&logo=pytest&logoColor=white)](./tests/)
 
-AI-агент для PR-команды **DDVB** на базе **Alice AI LLM** (Yandex AI Studio) — с браузерным интерфейсом и CLI.
+AI-агент для PR-команды **Kelva** на базе **Alice AI LLM** (Yandex AI Studio) — с браузерным интерфейсом и CLI.
 Поиск в российском интернете встроен в агента — отдельный API поиска не нужен.
 
 Требования: Python >= 3.11, [uv](https://docs.astral.sh/uv/).
@@ -70,10 +70,10 @@ uv run alice web
 
 ```bash
 uv run alice search "Какие тренды в брендинге в 2026 году?"
-uv run alice search "Конкуренты DDVB на рынке брендинга"
+uv run alice search "Конкуренты Kelva на рынке брендинга"
 
 # Сохранить результат в JSON (поля: query, answer, timestamp)
-uv run alice search "Конкуренты DDVB" --output results/competitors.json
+uv run alice search "Конкуренты Kelva" --output results/competitors.json
 
 # Сохранить результат в Markdown (H1-заголовок + ответ + timestamp)
 uv run alice search "Тренды брендинга 2026" --output reports/trends.md
@@ -177,7 +177,7 @@ src/alice_agent/
 
 static/
 ├── fonts/          # Atyp Display + Atyp Text (self-hosted .ttf)
-├── css/alice.css   # DDVB brand: white / #000 / #FDB71C, Atyp шрифты
+├── css/alice.css   # legacy DDVB brand: white / #000 / #FDB71C, Atyp шрифты
 ├── index.html      # SPA-оболочка
 └── js/             # Роутер (app.js), API (api.js), компоненты, вьюхи
 ```

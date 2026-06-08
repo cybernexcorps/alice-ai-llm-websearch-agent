@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<style>
+  /* Kelva self-hosted fonts — absolute file:// paths so Chrome headless loads them at render time. */
+  @font-face {
+    font-family: 'LINE Seed JP';
+    font-weight: 400; font-style: normal; font-display: block;
+    src: url('file:///D:/Downloads/SynologyDrive/kelvatech/SharedWorkspace/assets/fonts/lineseed/lineseedjp-400-latin.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'LINE Seed JP';
+    font-weight: 700; font-style: normal; font-display: block;
+    src: url('file:///D:/Downloads/SynologyDrive/kelvatech/SharedWorkspace/assets/fonts/lineseed/lineseedjp-700-latin.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'LINE Seed JP';
+    font-weight: 800; font-style: normal; font-display: block;
+    src: url('file:///D:/Downloads/SynologyDrive/kelvatech/SharedWorkspace/assets/fonts/lineseed/lineseedjp-800-latin.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'JetBrains Mono';
+    font-weight: 400; font-style: normal; font-display: block;
+    src: url('file:///D:/Downloads/SynologyDrive/kelvatech/SharedWorkspace/assets/fonts/lineseed/jetbrainsmono-400-latin-fs.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'JetBrains Mono';
+    font-weight: 500; font-style: normal; font-display: block;
+    src: url('file:///D:/Downloads/SynologyDrive/kelvatech/SharedWorkspace/assets/fonts/lineseed/jetbrainsmono-500-latin-fs.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'JetBrains Mono';
+    font-weight: 600; font-style: normal; font-display: block;
+    src: url('file:///D:/Downloads/SynologyDrive/kelvatech/SharedWorkspace/assets/fonts/lineseed/jetbrainsmono-600-latin-fs.woff2') format('woff2');
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --charcoal: #1A1A2E;
+    --charcoal-soft: #2A2A3E;
+    --cream: #F5F0EB;
+    --indigo: #6B6AC9;
+  }
+
+  html, body { width: 1280px; height: 640px; }
+
+  body {
+    background: var(--charcoal);
+    color: var(--cream);
+    font-family: 'LINE Seed JP', sans-serif;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Faint geometric dot-grid — infrastructure aesthetic, no AI clichés. */
+  .grid {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(107,106,201,0.16) 1.4px, transparent 1.4px);
+    background-size: 34px 34px;
+    -webkit-mask-image: linear-gradient(115deg, transparent 52%, #000 100%);
+    mask-image: linear-gradient(115deg, transparent 52%, #000 100%);
+  }
+  /* Soft indigo glow anchored bottom-right. */
+  .glow {
+    position: absolute; right: -180px; bottom: -220px;
+    width: 620px; height: 620px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(107,106,201,0.30) 0%, rgba(107,106,201,0) 68%);
+  }
+
+  .frame {
+    position: relative; z-index: 2;
+    width: 100%; height: 100%;
+    padding: 84px 96px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+
+  .mark { display: flex; align-items: center; gap: 22px; margin-bottom: 10px; }
+  .diamond {
+    width: 30px; height: 30px; transform: rotate(45deg);
+    background: var(--indigo);
+    border-radius: 7px;
+    box-shadow: 0 0 26px rgba(107,106,201,0.55);
+  }
+  .wordmark {
+    font-weight: 800; font-size: 112px; line-height: 0.9;
+    letter-spacing: -0.03em; color: var(--cream);
+  }
+  .rule {
+    width: 132px; height: 5px; border-radius: 3px;
+    background: var(--indigo); margin: 26px 0 30px 2px;
+  }
+  .tagline {
+    font-weight: 700; font-size: 46px; letter-spacing: -0.01em;
+    color: var(--cream);
+  }
+  .subtitle {
+    font-family: 'JetBrains Mono', monospace; font-weight: 400;
+    font-size: 22px; letter-spacing: 0.01em;
+    color: rgba(245,240,235,0.62); margin-top: 18px;
+  }
+  .subtitle .accent { color: var(--indigo); }
+
+  .chips {
+    display: flex; gap: 14px; margin-top: 52px;
+    font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 18px;
+  }
+  .chip {
+    display: flex; align-items: center; gap: 9px;
+    padding: 9px 18px; border-radius: 10px;
+    background: var(--charcoal-soft);
+    border: 1px solid rgba(245,240,235,0.10);
+    color: rgba(245,240,235,0.86);
+  }
+  .chip .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--indigo); }
+
+  /* Master-brand tie: small kelva wordmark, top-right. */
+  .kelva {
+    position: absolute; top: 84px; right: 96px; z-index: 2;
+    font-family: 'LINE Seed JP', sans-serif; font-weight: 700; font-size: 26px;
+    letter-spacing: -0.01em; color: rgba(245,240,235,0.40);
+  }
+  .kelva b { color: var(--cream); font-weight: 800; }
+</style>
+</head>
+<body>
+  <div class="grid"></div>
+  <div class="glow"></div>
+  <div class="kelva"><b>kelva</b> agent</div>
+
+  <div class="frame">
+    <div class="mark">
+      <div class="diamond"></div>
+      <div class="wordmark">alice</div>
+    </div>
+    <div class="rule"></div>
+    <div class="tagline">AI Web Search Agent</div>
+    <div class="subtitle">Yandex AI Studio <span class="accent">·</span> WebSearch built in <span class="accent">·</span> CLI + Web</div>
+
+    <div class="chips">
+      <div class="chip"><span class="dot"></span>python 3.11+</div>
+      <div class="chip"><span class="dot"></span>uv</div>
+      <div class="chip"><span class="dot"></span>typer</div>
+      <div class="chip"><span class="dot"></span>fastapi</div>
+    </div>
+  </div>
+</body>
+</html>
