@@ -23,6 +23,14 @@ TOOL_CALL_TEXT = (
 
 FINAL_ANSWER = "Конкуренты DDVB: агентство A, агентство Б..."
 
+# Real production tool-call payload captured from Yandex Agent Atelier
+# (list-wrapped, uses "function" key instead of "name" — this is the shape
+# that shipped a bug because _is_tool_call_response() only checked "name").
+TOOL_CALL_TEXT_REAL = (
+    '[ { "function": "web_search", "arguments": '
+    '{ "lang": "ru", "query": "авторские статьи о дизайне и брендинге" } } ]'
+)
+
 
 class TestAgentRunner:
 
@@ -74,6 +82,26 @@ class TestAgentRunner:
         # Second call must include previous_response_id
         second_kwargs = runner._client.responses.create.call_args_list[1].kwargs
         assert second_kwargs["previous_response_id"] == "r1"
+
+    def test_run_continues_loop_on_real_format_tool_call(self, mock_settings):
+        """Regression: real Yandex tool-call shape (list-wrapped 'function' key)
+        must be detected so the loop continues to a real answer, instead of
+        returning the raw tool-call JSON as if it were the final answer."""
+        from alice_agent.agent import AgentRunner
+
+        runner = AgentRunner(settings=mock_settings)
+        runner._client = MagicMock()
+        runner._client.responses.create.side_effect = [
+            _resp("r1", TOOL_CALL_TEXT_REAL),
+            _resp("r2", FINAL_ANSWER),
+        ]
+
+        result = runner.run("авторские статьи о дизайне и брендинге")
+
+        assert result == FINAL_ANSWER
+        assert runner._client.responses.create.call_count == 2
+        assert "web_search" not in result
+        assert TOOL_CALL_TEXT_REAL not in result
 
     def test_run_saves_final_response_id(self, mock_settings):
         """previous_response_id should be set to the last response's id."""
@@ -215,10 +243,33 @@ class TestToolCallDetection:
         text = 'Поищу.\n\n{"name": "web_search", "parameters": {}}'
         assert _is_tool_call_response(text) is True
 
+    def test_detects_real_function_format(self):
+        """THE regression test: this is the exact production payload that the
+        old detector (which only looked for "name":"web_search") missed."""
+        from alice_agent.agent import _is_tool_call_response
+        assert _is_tool_call_response(TOOL_CALL_TEXT_REAL) is True
+
+    def test_detects_function_list_wrapped_no_spaces(self):
+        from alice_agent.agent import _is_tool_call_response
+        text = '[{"function":"web_search","arguments":{"lang":"ru","query":"тест"}}]'
+        assert _is_tool_call_response(text) is True
+
+    def test_detects_function_with_spaces(self):
+        from alice_agent.agent import _is_tool_call_response
+        text = '[ { "function": "web_search", "arguments": { "lang": "ru", "query": "тест" } } ]'
+        assert _is_tool_call_response(text) is True
+
     def test_does_not_flag_normal_json_in_answer(self):
         from alice_agent.agent import _is_tool_call_response
         # A real answer mentioning JSON should not be flagged
         text = "API возвращает {\"status\": \"ok\", \"name\": \"DDVB\"}."
+        assert _is_tool_call_response(text) is False
+
+    def test_does_not_flag_function_key_in_answer(self):
+        from alice_agent.agent import _is_tool_call_response
+        # A real answer mentioning a "function" key unrelated to web_search
+        # must not be flagged (mirrors the "name" false-positive guard).
+        text = "Схема: {\"function\": \"format_date\", \"args\": {}}."
         assert _is_tool_call_response(text) is False
 
 

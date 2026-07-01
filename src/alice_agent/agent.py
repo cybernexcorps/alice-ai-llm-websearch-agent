@@ -31,11 +31,15 @@ def _is_tool_call_response(text: str) -> bool:
     """Return True if the response is an unfinished tool call with no final answer.
 
     The Yandex agent generates tool calls as JSON text before executing them.
-    A response that ends at this step looks like:
+    The real Agent Atelier server emits a list-wrapped step keyed by
+    "function", e.g.:
+        [{"function": "web_search", "arguments": {"lang": "ru", "query": "..."}}]
+    An older/alternate shape keyed by "name" is kept as a fallback for
+    compatibility:
         "I'll search...\n\n{\"name\":\"web_search\",...}\n\n{\"query\":\"...\"}"
     """
     normalized = text.replace(": ", ":").replace(" :", ":")
-    return '"name":"web_search"' in normalized
+    return '"function":"web_search"' in normalized or '"name":"web_search"' in normalized
 
 
 class AgentRunner:
