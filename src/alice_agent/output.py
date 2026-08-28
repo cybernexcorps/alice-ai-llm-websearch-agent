@@ -12,8 +12,15 @@ from rich.spinner import Spinner
 from rich.style import Style
 from rich.text import Text
 
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
 # Shared console instance — force UTF-8 on Windows to support Cyrillic + symbols
-console = Console(highlight=False, safe_box=True)
+console = Console(highlight=False, safe_box=True, legacy_windows=False)
 
 # DDVB brand colors
 ALICE_BLUE = "bright_blue"
@@ -23,9 +30,17 @@ SUCCESS_GREEN = "green"
 MUTED = "dim"
 
 
+import re
+
+
 def print_answer(text: str, title: str = "Алиса") -> None:
     """Print the final agent answer in a styled panel with Markdown."""
-    md = Markdown(text)
+    display_text = re.sub(
+        r"data:image/[^;]+;base64,[A-Za-z0-9+/=]{100,}",
+        "[Изображение сгенерировано (base64)]",
+        text,
+    )
+    md = Markdown(display_text)
     panel = Panel(
         md,
         title=f"[{ALICE_BLUE}]{title}[/{ALICE_BLUE}]",

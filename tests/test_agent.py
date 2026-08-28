@@ -10,6 +10,7 @@ from tests.fixtures.yandex_responses import (
     FINAL_ANSWER,
     TOOL_CALL_TEXT,
     TOOL_CALL_TEXT_REAL,
+    IMAGE_TOOL_CALL_TEXT,
 )
 
 
@@ -90,6 +91,22 @@ class TestAgentRunner:
         assert runner._client.responses.create.call_count == 2
         assert "web_search" not in result
         assert TOOL_CALL_TEXT_REAL not in result
+
+    def test_run_continues_loop_on_image_tool_call(self, mock_settings):
+        from alice_agent.agent import AgentRunner
+
+        runner = AgentRunner(settings=mock_settings)
+        runner._client = MagicMock()
+        runner._client.responses.create.side_effect = [
+            _resp("r1", IMAGE_TOOL_CALL_TEXT),
+            _resp("r2", FINAL_ANSWER),
+        ]
+
+        result = runner.run("нарисуй закат")
+
+        assert result == FINAL_ANSWER
+        assert runner._client.responses.create.call_count == 2
+        assert IMAGE_TOOL_CALL_TEXT not in result
 
     def test_run_saves_final_response_id(self, mock_settings):
         """previous_response_id should be set to the last response's id."""
@@ -191,7 +208,7 @@ class TestAgentRunner:
             runner.run("вопрос")
 
     def test_run_empty_output_returns_fallback(self, mock_settings):
-        """Empty output_text should return fallback message."""
+        """Empty output_text without media should return fallback message."""
         from alice_agent.agent import AgentRunner
 
         runner = AgentRunner(settings=mock_settings)
@@ -200,6 +217,19 @@ class TestAgentRunner:
 
         result = runner.run("вопрос")
         assert len(result) > 0
+
+    def test_run_returns_image_markdown_when_output_contains_image(self, mock_settings):
+        """Image base64 in response.output is properly formatted as markdown."""
+        from alice_agent.agent import AgentRunner
+
+        runner = AgentRunner(settings=mock_settings)
+        runner._client = MagicMock()
+        img_resp = _resp("r1", "")
+        img_resp.output = [{"id": "generate_image", "result": "/9j/4AAQSkZJRg=="}]
+        runner._client.responses.create.return_value = img_resp
+
+        result = runner.run("нарисуй кота")
+        assert "![Сгенерированное изображение](data:image/jpeg;base64,/9j/4AAQSkZJRg==)" in result
 
     def test_client_base_url(self, mock_settings):
         from alice_agent.agent import AgentRunner

@@ -641,6 +641,14 @@ body {
   padding: 1px 5px;
   border-radius: 3px;
 }
+.chat-message__bubble img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+  margin-top: 8px;
+  display: block;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
 
 /* Typing indicator */
 .typing-indicator {

@@ -21,3 +21,9 @@ TOOL_CALL_TEXT_REAL = (
     '[ { "function": "web_search", "arguments": '
     '{ "lang": "ru", "query": "авторские статьи о дизайне и брендинге" } } ]'
 )
+
+IMAGE_TOOL_CALL_TEXT = (
+    '[ { "function": "image_generation", "arguments": '
+    '{ "prompt": "a beautiful sunset" } } ]'
+)
+
